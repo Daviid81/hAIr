@@ -1,0 +1,4 @@
+es\hair\backend\controller\PruebaController.class
+es\hair\backend\HAIrApplication.class
+es\hair\backend\config\CorsConfig.class
+es\hair\backend\config\OpenApiConfig.class

@@ -8,6 +8,7 @@ class HAIrApplicationTests {
 
     @Test
     void contextLoads() {
+        
     }
 
 }

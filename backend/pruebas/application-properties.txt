@@ -1,0 +1,5 @@
+# Añadir a src/main/resources/application.properties
+gemini.api-key=${GEMINI_API_KEY}
+gemini.model=${GEMINI_MODEL}
+gemini.base-url=https://generativelanguage.googleapis.com/v1beta
+gemini.timeout-seconds=30

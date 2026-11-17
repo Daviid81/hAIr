@@ -10,10 +10,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.ErrorResponse;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.Map;
 
@@ -44,8 +47,24 @@ public class GlobalExceptionHandler {
         return respuesta(HttpStatus.INTERNAL_SERVER_ERROR, "No se pudo completar la solicitud.");
     }
 
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<Map<String, String>> recursoNoEncontrado(NoResourceFoundException e) {
+        return respuesta(HttpStatus.NOT_FOUND, "La ruta solicitada no existe.");
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<Map<String, String>> metodoNoPermitido(HttpRequestMethodNotSupportedException e) {
+        return respuesta(HttpStatus.METHOD_NOT_ALLOWED, "El método HTTP no está permitido para esta ruta.");
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> errorNoControlado(Exception e) {
+        if (e instanceof ErrorResponse errorResponse) {
+            HttpStatus status = HttpStatus.valueOf(errorResponse.getStatusCode().value());
+            if (!status.is5xxServerError()) {
+                return respuesta(status, "La solicitud no se pudo completar.");
+            }
+        }
         log.error("Error no controlado en la API", e);
         return respuesta(HttpStatus.INTERNAL_SERVER_ERROR, "No se pudo completar la solicitud.");
     }
